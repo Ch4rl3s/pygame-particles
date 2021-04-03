@@ -3,7 +3,7 @@ import sys
 import math
 import time as tm
 import ui.classes as ui
-import classes as rc
+import classes as pt
 
 mainClock = pygame.time.Clock()
 
@@ -34,11 +34,38 @@ timer_label = ui.Label(10, 25, "timer label")
 
 #ARRAYS
 ui_arr = [project_name_label, timer_label]
+particle_array = []
 
+#FUNCTIONS
+def spawn_particles(amount, pos, radius):
+    x,y = pos
+    for i in range(amount):
+        x1 = radius*math.sin(i * (2.0 * 3.14) / amount) + x
+        y1 = radius*math.cos(i * (2.0 * 3.14) / amount) + y
+        particle_array.append(pt.Particle((x1, y1)))
+
+def force_pull(arr, pos):
+    x,y = pos
+    for particle in arr:
+        mx = x - particle.position.x
+        my = y - particle.position.y
+        particle.force.x += mx/10
+        particle.force.y += my/10
+
+spawn_particles(1000, (800, 450), 100)
+
+#MAIN LOOP
 while True:
     screen.fill(black)
 
     start = tm.time()
+
+    force_pull(particle_array, (800, 450))
+
+
+    for particle in particle_array:
+        particle.update()
+        particle.draw(screen, white)
 
     end = tm.time()
     timer_label.text = f"{round((end - start), 5)}"
