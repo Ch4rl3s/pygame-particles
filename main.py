@@ -31,6 +31,7 @@ mouse_down = False
 #OBJECTS
 project_name_label = ui.Label(10, 10, "particles")
 timer_label = ui.Label(10, 25, "timer label")
+emmiter = pt.Emmiter((800, 450), pt.Particle((800, 450)))
 
 #ARRAYS
 ui_arr = [project_name_label, timer_label]
@@ -47,12 +48,16 @@ def spawn_particles(amount, pos, radius):
 def force_pull(arr, pos):
     x,y = pos
     for particle in arr:
-        mx = x - particle.position.x
-        my = y - particle.position.y
-        particle.force.x += mx/10
-        particle.force.y += my/10
+        try:
+            mx = x-particle.position.x
+            my = y-particle.position.y
+            particle.force.x += mx
+            particle.force.y += my
+        except ZeroDivisionError:
+            pass
 
-spawn_particles(1000, (800, 450), 100)
+# spawn_particles(50, (800, 450), 100)
+# spawn_particles(50, (800, 450), 300)
 
 #MAIN LOOP
 while True:
@@ -60,11 +65,14 @@ while True:
 
     start = tm.time()
 
-    force_pull(particle_array, (800, 450))
+    emmiter.emit(particle_array)
+    # force_pull(particle_array, (400, 300))
+    # force_pull(particle_array, (1200, 600))
 
 
     for particle in particle_array:
         particle.update()
+        # particle.draw_force(screen, green)
         particle.draw(screen, white)
 
     end = tm.time()
